@@ -1,0 +1,93 @@
+import React, { useState, useEffect } from 'react';
+
+const AdminPanel = () => {
+  const [pendingJobs, setPendingJobs] = useState([]);
+
+  useEffect(() => {
+    const fetchPendingJobs = async () => {
+      try {
+        const response = await fetch('/api/job-postings');
+        const data = await response.json();
+        setPendingJobs(data.filter(job => !job.isApproved));
+      } catch (error) {
+        console.error('Error fetching job postings', error);
+      }
+    };
+
+    fetchPendingJobs();
+  }, []);
+
+  const handleApprove = async (jobId) => {
+    try {
+      const response = await fetch(`/api/job-postings/${jobId}/approve`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        setPendingJobs(pendingJobs.filter(job => job._id !== jobId));
+      } else {
+        console.error('Error approving job');
+      }
+    } catch (error) {
+      console.error('Error approving job', error);
+    }
+  };
+
+  const handleDelete = async (jobId) => {
+    try {
+      const response = await fetch(`/api/job-postings/${jobId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        setPendingJobs(pendingJobs.filter(job => job._id !== jobId));
+      } else {
+        console.error('Error deleting job');
+      }
+    } catch (error) {
+      console.error('Error deleting job', error);
+    }
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6">Admin Job Approval Panel</h2>
+      {pendingJobs.length === 0 ? (
+        <p className="text-center text-gray-500">No pending job postings</p>
+      ) : (
+        <div>
+          {pendingJobs.map(job => (
+            <div 
+              key={job._id} 
+              className="border-b py-4 flex justify-between items-center"
+            >
+              <div>
+                <h3 className="font-bold">{job.title} - {job.company}</h3>
+                <p className="text-sm text-gray-600">{job.description}</p>
+              </div>
+              <div className="space-x-2">
+                <button
+                  onClick={() => handleApprove(job._id)}
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => handleDelete(job._id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminPanel;

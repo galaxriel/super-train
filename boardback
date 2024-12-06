@@ -1,0 +1,58 @@
+// Routes
+app.post('/api/job-postings', async (req, res) => {
+  try {
+    const newPosting = new JobPosting({
+      ...req.body,
+      isApproved: false
+    });
+    await newPosting.save();
+    res.status(201).json(newPosting);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.get('/api/job-postings', async (req, res) => {
+  try {
+    const approvedPostings = await JobPosting.find({ isApproved: true });
+    res.json(approvedPostings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/api/job-postings/:id/approve', async (req, res) => {
+  try {
+    const posting = await JobPosting.findByIdAndUpdate(
+      req.params.id, 
+      { isApproved: true }, 
+      { new: true }
+    );
+    res.json(posting);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.delete('/api/job-postings/:id', async (req, res) => {
+  try {
+    await JobPosting.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: 'Job posting deleted' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Admin Login
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  const user = await User.findOne({ username });
+  
+  if (user && await bcrypt.compare(password, user.password)) {
+    res.json({ success: true, admin: true });
+  } else {
+    res.status(401).json({ success: false });
+  }
+});
+
+module.exports = app;

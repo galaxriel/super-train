@@ -1,0 +1,135 @@
+import React, { useState } from 'react';
+
+// Mock components to replace imported ones
+const EmployerSubmission = () => (
+  <div className="p-4">
+    <h2 className="text-2xl font-bold">Submit Job Posting</h2>
+    <form className="space-y-4">
+      <input 
+        type="text" 
+        placeholder="Job Title" 
+        className="w-full p-2 border rounded" 
+      />
+      <input 
+        type="text" 
+        placeholder="Company" 
+        className="w-full p-2 border rounded" 
+      />
+      <textarea 
+        placeholder="Job Description" 
+        className="w-full p-2 border rounded"
+      />
+      <button 
+        className="bg-blue-500 text-white p-2 rounded"
+      >
+        Submit Job
+      </button>
+    </form>
+  </div>
+);
+
+const JobListings = () => (
+  <div className="p-4">
+    <h2 className="text-2xl font-bold">Job Listings</h2>
+    <div className="space-y-4">
+      <div className="border p-4 rounded">
+        <h3 className="font-bold">Software Developer</h3>
+        <p>Tech Innovations Inc.</p>
+        <p>Full-time position for experienced developers</p>
+      </div>
+    </div>
+  </div>
+);
+
+const AdminPanel = () => (
+  <div className="p-4">
+    <h2 className="text-2xl font-bold">Admin Panel</h2>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center border p-4 rounded">
+        <div>
+          <h3 className="font-bold">Pending Job: Sales Manager</h3>
+          <p>Marketing Solutions LLC</p>
+        </div>
+        <div className="space-x-2">
+          <button className="bg-green-500 text-white p-2 rounded">
+            Approve
+          </button>
+          <button className="bg-red-500 text-white p-2 rounded">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const StudentApplicationPage = () => (
+  <div className="p-4">
+    <h2 className="text-2xl font-bold">Apply for Job</h2>
+    <form className="space-y-4">
+      <input 
+        type="text" 
+        placeholder="Full Name" 
+        className="w-full p-2 border rounded" 
+      />
+      <input 
+        type="email" 
+        placeholder="Email" 
+        className="w-full p-2 border rounded" 
+      />
+      <input 
+        type="file" 
+        className="w-full p-2 border rounded" 
+      />
+      <textarea 
+        placeholder="Cover Letter" 
+        className="w-full p-2 border rounded"
+      />
+      <button 
+        className="bg-blue-500 text-white p-2 rounded"
+      >
+        Submit Application
+      </button>
+    </form>
+  </div>
+);
+
+function App() {
+  const [currentPage, setCurrentPage] = useState('jobListings');
+
+  const renderPage = () => {
+    switch(currentPage) {
+      case 'employerSubmission':
+        return <EmployerSubmission />;
+      case 'adminPanel':
+        return <AdminPanel />;
+      case 'studentApplication':
+        return <StudentApplicationPage />;
+      default:
+        return <JobListings />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <nav className="bg-blue-600 text-white p-4">
+        <div className="container mx-auto flex justify-between">
+          <h1 className="text-xl font-bold">School Job Board</h1>
+          <div className="space-x-4">
+            <button 
+              className="hover:bg-blue-700 p-2 rounded"
+            >
+              Admin Panel
+            </button>
+          </div>
+        </div>
+      </nav>
+      
+      <div className="container mx-auto px-4 py-8">
+        {renderPage()}
+      </div>
+    </div>
+  );
+}
+
+export default App;
